@@ -1,0 +1,593 @@
+---------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\MPH EPIDEMIOLOGY AND DISEASE CONTROL\STATA & R\Framingham_Analysis.log
+  log type:  text
+ opened on:  11 Jun 2025, 10:26:23
+
+. cd "D:\MPH EPIDEMIOLOGY AND DISEASE CONTROL\STATA & R"
+D:\MPH EPIDEMIOLOGY AND DISEASE CONTROL\STATA & R
+
+. clear all
+
+. use "Frammingham heart study_CSV.csv", clear
+file Frammingham heart study_CSV.csv not Stata format
+r(610);
+
+. import delimited "D:\MPH EPIDEMIOLOGY AND DISEASE CONTROL\STATA & R\Frammingham heart study_CSV.csv"
+(encoding automatically selected: ISO-8859-2)
+(17 vars, 95 obs)
+
+. * 1. Data Management
+
+. 
+. * Label variables for clarity
+
+. 
+. label variable age "Age (years)"
+
+. 
+. label variable bmi "Body Mass Index"
+
+. 
+. label variable cursmoke "Current Smoker (0=No, 1=Yes)"
+
+. 
+. label variable cvd "Cardiovascular Disease (0=No, 1=Yes)"
+
+. 
+. label variable death "Death (0=No, 1=Yes)"
+
+. 
+. label variable diabetes "Diabetes (0=No, 1=Yes)"
+
+. 
+. label variable diabp "Diastolic Blood Pressure (mmHg)"
+
+. 
+. label variable educ "Education Level (categorical)"
+
+. 
+. label variable glucose "Glucose Level (mg/dL)"
+
+. 
+. label variable heartrte "Heart Rate (bpm)"
+
+. 
+. label variable hyperten "Hypertension (0=No, 1=Yes)"
+
+. 
+. label variable period "Study Period"
+
+. 
+. label variable randid "Random ID"
+
+. 
+. label variable sex "Sex (0=Female, 1=Male)"
+
+. 
+. label variable stroke "Stroke (0=No, 1=Yes)"
+
+. 
+. label variable sysbp "Systolic Blood Pressure (mmHg)"
+
+. 
+. label variable totchol "Total Cholesterol (mg/dL)"
+
+. 
+. 
+. codebook, compact
+
+Variable   Obs Unique      Mean    Min      Max  Label
+---------------------------------------------------------------------------------------------------------------
+age         95     33  50.98947     35       69  Age (years)
+bmi         95     90  25.67758  18.18    36.57  Body Mass Index
+cursmoke    95      2  .4526316      0        1  Current Smoker (0=No, 1=Yes)
+cvd         95      2  .3157895      0        1  Cardiovascular Disease (0=No, 1=Yes)
+death       95      2        .4      0        1  Death (0=No, 1=Yes)
+diabetes    95      2  .0526316      0        1  Diabetes (0=No, 1=Yes)
+diabp       95     46  83.16316     62      133  Diastolic Blood Pressure (mmHg)
+educ        93      4  1.892473      1        4  Education Level (categorical)
+glucose     86     42  83.27907     56      294  Glucose Level (mg/dL)
+heartrte    95     35  73.53684     50      107  Heart Rate (bpm)
+hyperten    95      2  .6947368      0        1  Hypertension (0=No, 1=Yes)
+period      95      1         1      1        1  Study Period
+randid      95     95   5887138  12629  9964282  Random ID
+sex         95      2  1.526316      1        2  Sex (0=Female, 1=Male)
+stroke      95      2  .1052632      0        1  Stroke (0=No, 1=Yes)
+sysbp       95     61  133.6579     90      209  Systolic Blood Pressure (mmHg)
+totchol     91     73  241.5495    157      390  Total Cholesterol (mg/dL)
+---------------------------------------------------------------------------------------------------------------
+
+. * Check for missing values
+
+. 
+. misstable summarize
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+          educ |         2                  93  |      4          1           4
+       glucose |         9                  86  |     42         56         294
+       totchol |         4                  91  |     73        157         390
+  -----------------------------------------------------------------------------
+
+. * 2. Descriptive Statistics
+
+. 
+. * Summary statistics for continuous variables
+
+. 
+. summarize age bmi diabp glucose heartrte sysbp totchol, detail
+
+                         Age (years)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%           35             35
+ 5%           38             37
+10%           39             37       Obs                  95
+25%           43             37       Sum of wgt.          95
+
+50%           52                      Mean           50.98947
+                        Largest       Std. dev.      9.232799
+75%           58             67
+90%           65             67       Variance       85.24457
+95%           66             68       Skewness       .1295529
+99%           69             69       Kurtosis       1.881472
+
+                       Body Mass Index
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%        18.18          18.18
+ 5%        20.54          19.09
+10%        21.22          19.53       Obs                  95
+25%        23.57          20.12       Sum of wgt.          95
+
+50%         25.4                      Mean           25.67758
+                        Largest       Std. dev.      3.298695
+75%        27.64          32.54
+90%        29.79           32.6       Variance       10.88139
+95%        32.18          33.11       Skewness       .3648235
+99%        36.57          36.57       Kurtosis       3.551271
+
+               Diastolic Blood Pressure (mmHg)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%           62             62
+ 5%         66.5             65
+10%           68             66       Obs                  95
+25%           74           66.5       Sum of wgt.          95
+
+50%           82                      Mean           83.16316
+                        Largest       Std. dev.      12.29912
+75%           89            111
+90%           97          115.5       Variance       151.2683
+95%          106            118       Skewness       1.126635
+99%          133            133       Kurtosis       5.302447
+
+                    Glucose Level (mg/dL)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%           56             56
+ 5%           61             57
+10%           63             60       Obs                  86
+25%           73             61       Sum of wgt.          86
+
+50%           80                      Mean           83.27907
+                        Largest       Std. dev.      27.21446
+75%           87            127
+90%           98            135       Variance       740.6271
+95%          104            137       Skewness       5.637971
+99%          294            294       Kurtosis       43.28468
+
+                      Heart Rate (bpm)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%           50             50
+ 5%           55             50
+10%           60             52       Obs                  95
+25%           65             55       Sum of wgt.          95
+
+50%           73                      Mean           73.53684
+                        Largest       Std. dev.      12.02374
+75%           78            100
+90%           95            100       Variance       144.5704
+95%          100            100       Skewness       .6160109
+99%          107            107       Kurtosis        3.29815
+
+               Systolic Blood Pressure (mmHg)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%           90             90
+ 5%          106           92.5
+10%        111.5           96.5       Obs                  95
+25%          118             99       Sum of wgt.          95
+
+50%          130                      Mean           133.6579
+                        Largest       Std. dev.      22.46312
+75%          146          185.5
+90%          164            195       Variance       504.5918
+95%        177.5            204       Skewness       1.001608
+99%          209            209       Kurtosis       4.403674
+
+                  Total Cholesterol (mg/dL)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%          157            157
+ 5%          166            163
+10%          180            165       Obs                  91
+25%          212            165       Sum of wgt.          91
+
+50%          235                      Mean           241.5495
+                        Largest       Std. dev.      44.94794
+75%          276            313
+90%          302            316       Variance       2020.317
+95%          312            325       Skewness       .3147734
+99%          390            390       Kurtosis       3.049384
+
+. * Frequency tables for categorical/binary variables
+
+. 
+. tabulate cursmoke
+
+    Current |
+     Smoker |
+     (0=No, |
+     1=Yes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         52       54.74       54.74
+          1 |         43       45.26      100.00
+------------+-----------------------------------
+      Total |         95      100.00
+
+. 
+. tabulate cvd
+
+Cardiovascu |
+lar Disease |
+     (0=No, |
+     1=Yes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         65       68.42       68.42
+          1 |         30       31.58      100.00
+------------+-----------------------------------
+      Total |         95      100.00
+
+. 
+. tabulate death
+
+      Death |
+     (0=No, |
+     1=Yes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         57       60.00       60.00
+          1 |         38       40.00      100.00
+------------+-----------------------------------
+      Total |         95      100.00
+
+. 
+. tabulate diabetes
+
+   Diabetes |
+     (0=No, |
+     1=Yes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         90       94.74       94.74
+          1 |          5        5.26      100.00
+------------+-----------------------------------
+      Total |         95      100.00
+
+. 
+. tabulate educ
+
+  Education |
+      Level |
+(categorica |
+         l) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |         41       44.09       44.09
+          2 |         30       32.26       76.34
+          3 |         13       13.98       90.32
+          4 |          9        9.68      100.00
+------------+-----------------------------------
+      Total |         93      100.00
+
+. 
+. tabulate hyperten
+
+Hypertensio |
+   n (0=No, |
+     1=Yes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         29       30.53       30.53
+          1 |         66       69.47      100.00
+------------+-----------------------------------
+      Total |         95      100.00
+
+. 
+. tabulate sex
+
+        Sex |
+ (0=Female, |
+    1=Male) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |         45       47.37       47.37
+          2 |         50       52.63      100.00
+------------+-----------------------------------
+      Total |         95      100.00
+
+. 
+. tabulate stroke
+
+     Stroke |
+     (0=No, |
+     1=Yes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         85       89.47       89.47
+          1 |         10       10.53      100.00
+------------+-----------------------------------
+      Total |         95      100.00
+
+. * Box plot for systolic BP by sex
+
+. 
+. graph box sysbp, over(sex) title("Systolic BP by Sex") ytitle("Systolic BP (mmHg)")
+
+. 
+. graph save "sysbp_sex_boxplot.gph", replace
+(file sysbp_sex_boxplot.gph not found)
+file sysbp_sex_boxplot.gph saved
+
+. 
+. 
+. 
+. * Scatter plot of BMI vs Total Cholesterol
+
+. 
+. scatter bmi totchol, title("BMI vs Total Cholesterol") xtitle("Total Cholesterol (mg/dL)") ytitle("BMI")
+
+. 
+. graph save "bmi_totchol_scatter.gph", replace
+(file bmi_totchol_scatter.gph not found)
+file bmi_totchol_scatter.gph saved
+
+. 
+. 
+. 
+. * 4. Regression Analysis
+
+. 
+. * Logistic regression: CVD as outcome
+
+. 
+. logistic cvd age bmi cursmoke diabetes hyperten sysbp totchol i.sex i.educ
+
+Logistic regression                                     Number of obs =     89
+                                                        LR chi2(11)   =  26.14
+                                                        Prob > chi2   = 0.0062
+Log likelihood = -43.108548                             Pseudo R2     = 0.2326
+
+------------------------------------------------------------------------------
+         cvd | Odds ratio   Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         age |    .971685   .0326414    -0.86   0.393     .9097697    1.037814
+         bmi |    1.13471   .1104816     1.30   0.194     .9375774    1.373291
+    cursmoke |   1.414361   .8305433     0.59   0.555     .4474212    4.470995
+    diabetes |   3.848732   4.467828     1.16   0.246     .3955435    37.44907
+    hyperten |   2.304266   1.684396     1.14   0.253     .5499365    9.655009
+       sysbp |   1.015459   .0151209     1.03   0.303     .9862505    1.045532
+     totchol |   1.017338   .0072435     2.41   0.016     1.003239    1.031634
+       2.sex |   .1664725   .1109762    -2.69   0.007     .0450716    .6148686
+             |
+        educ |
+          2  |   .3555242   .2514946    -1.46   0.144     .0888663    1.422333
+          3  |   .2987984   .2871936    -1.26   0.209     .0454188    1.965716
+          4  |    1.11803   .9957279     0.13   0.900     .1951488    6.405327
+             |
+       _cons |   .0002258    .000735    -2.58   0.010     3.82e-07    .1332697
+------------------------------------------------------------------------------
+Note: _cons estimates baseline odds.
+
+. 
+. estimates store cvd_model
+
+. 
+. outreg2 using "cvd_logistic_results.txt", replace stats(coef se) word
+command outreg2 is unrecognized
+r(199);
+
+. 
+. 
+. 
+. * Cox regression: Time to death (assuming period as time variable)
+
+. 
+. stset period, failure(death)
+
+Survival-time data settings
+
+         Failure event: death!=0 & death<.
+Observed time interval: (0, period]
+     Exit on or before: failure
+
+--------------------------------------------------------------------------
+         95  total observations
+          0  exclusions
+--------------------------------------------------------------------------
+         95  observations remaining, representing
+         38  failures in single-record/single-failure data
+         95  total analysis time at risk and under observation
+                                                At risk from t =         0
+                                     Earliest observed entry t =         0
+                                          Last observed exit t =         1
+
+. 
+. stcox age bmi cursmoke diabetes hyperten sysbp totchol i.sex i.educ
+
+        Failure _d: death
+  Analysis time _t: period
+
+Iteration 0:   log likelihood = -161.59091
+Iteration 1:   log likelihood = -150.87143
+Iteration 2:   log likelihood =  -150.6384
+Iteration 3:   log likelihood =   -150.638
+Iteration 4:   log likelihood =   -150.638
+Refining estimates:
+Iteration 0:   log likelihood =   -150.638
+
+Cox regression with Breslow method for ties
+
+No. of subjects = 89                                    Number of obs =     89
+No. of failures = 36
+Time at risk    = 89
+                                                        LR chi2(11)   =  21.91
+Log likelihood = -150.638                               Prob > chi2   = 0.0251
+
+------------------------------------------------------------------------------
+          _t | Haz. ratio   Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         age |   1.074257   .0241759     3.18   0.001     1.027903    1.122702
+         bmi |   .9540048   .0631217    -0.71   0.477     .8379745    1.086101
+    cursmoke |   1.016176   .4004692     0.04   0.968       .46937         2.2
+    diabetes |   1.799968   1.067303     0.99   0.322     .5630397    5.754273
+    hyperten |   1.321712    .640023     0.58   0.565     .5116265    3.414451
+       sysbp |   1.002785   .0083785     0.33   0.739     .9864971    1.019342
+     totchol |   1.001573   .0045954     0.34   0.732     .9926069    1.010621
+       2.sex |   .5155244   .2067129    -1.65   0.098     .2349296    1.131255
+             |
+        educ |
+          2  |   .6023485    .294653    -1.04   0.300     .2309205    1.571206
+          3  |   1.003355   .5211879     0.01   0.995     .3624951      2.7772
+          4  |   1.072833   .5894754     0.13   0.898     .3654544    3.149421
+------------------------------------------------------------------------------
+
+. 
+. estimates store death_model
+
+. 
+. outreg2 using "death_cox_results.txt", replace stats(coef se) word
+command outreg2 is unrecognized
+r(199);
+
+. 
+. 
+. 
+. * 5. Save Results
+
+. 
+. * Log results to file
+
+. 
+. log using "framingham_analysis.log", replace
+log file already open
+r(604);
+
+. 
+. summarize
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |         95    50.98947    9.232799         35         69
+         bmi |         95    25.67758    3.298695      18.18      36.57
+    cursmoke |         95    .4526316    .5003918          0          1
+         cvd |         95    .3157895    .4672955          0          1
+       death |         95          .4    .4924969          0          1
+-------------+---------------------------------------------------------
+    diabetes |         95    .0526316    .2244815          0          1
+       diabp |         95    83.16316    12.29912         62        133
+        educ |         93    1.892473    .9831445          1          4
+     glucose |         86    83.27907    27.21446         56        294
+    heartrte |         95    73.53684    12.02374         50        107
+-------------+---------------------------------------------------------
+    hyperten |         95    .6947368    .4629619          0          1
+      period |         95           1           0          1          1
+      randid |         95     5887138     2881208      12629    9964282
+         sex |         95    1.526316    .5019559          1          2
+      stroke |         95    .1052632    .3085203          0          1
+-------------+---------------------------------------------------------
+       sysbp |         95    133.6579    22.46312         90        209
+     totchol |         91    241.5495    44.94794        157        390
+_est_cvd_m~l |         95    .9368421    .2445372          0          1
+         _st |         95           1           0          1          1
+          _d |         95          .4    .4924969          0          1
+-------------+---------------------------------------------------------
+          _t |         95           1           0          1          1
+         _t0 |         95           0           0          0          0
+_est_death~l |         95    .9368421    .2445372          0          1
+
+. 
+. logistic cvd age bmi cursmoke diabetes hyperten sysbp totchol i.sex i.educ
+
+Logistic regression                                     Number of obs =     89
+                                                        LR chi2(11)   =  26.14
+                                                        Prob > chi2   = 0.0062
+Log likelihood = -43.108548                             Pseudo R2     = 0.2326
+
+------------------------------------------------------------------------------
+         cvd | Odds ratio   Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         age |    .971685   .0326414    -0.86   0.393     .9097697    1.037814
+         bmi |    1.13471   .1104816     1.30   0.194     .9375774    1.373291
+    cursmoke |   1.414361   .8305433     0.59   0.555     .4474212    4.470995
+    diabetes |   3.848732   4.467828     1.16   0.246     .3955435    37.44907
+    hyperten |   2.304266   1.684396     1.14   0.253     .5499365    9.655009
+       sysbp |   1.015459   .0151209     1.03   0.303     .9862505    1.045532
+     totchol |   1.017338   .0072435     2.41   0.016     1.003239    1.031634
+       2.sex |   .1664725   .1109762    -2.69   0.007     .0450716    .6148686
+             |
+        educ |
+          2  |   .3555242   .2514946    -1.46   0.144     .0888663    1.422333
+          3  |   .2987984   .2871936    -1.26   0.209     .0454188    1.965716
+          4  |    1.11803   .9957279     0.13   0.900     .1951488    6.405327
+             |
+       _cons |   .0002258    .000735    -2.58   0.010     3.82e-07    .1332697
+------------------------------------------------------------------------------
+Note: _cons estimates baseline odds.
+
+. 
+. stcox age bmi cursmoke diabetes hyperten sysbp totchol i.sex i.educ
+
+        Failure _d: death
+  Analysis time _t: period
+
+Iteration 0:   log likelihood = -161.59091
+Iteration 1:   log likelihood = -150.87143
+Iteration 2:   log likelihood =  -150.6384
+Iteration 3:   log likelihood =   -150.638
+Iteration 4:   log likelihood =   -150.638
+Refining estimates:
+Iteration 0:   log likelihood =   -150.638
+
+Cox regression with Breslow method for ties
+
+No. of subjects = 89                                    Number of obs =     89
+No. of failures = 36
+Time at risk    = 89
+                                                        LR chi2(11)   =  21.91
+Log likelihood = -150.638                               Prob > chi2   = 0.0251
+
+------------------------------------------------------------------------------
+          _t | Haz. ratio   Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         age |   1.074257   .0241759     3.18   0.001     1.027903    1.122702
+         bmi |   .9540048   .0631217    -0.71   0.477     .8379745    1.086101
+    cursmoke |   1.016176   .4004692     0.04   0.968       .46937         2.2
+    diabetes |   1.799968   1.067303     0.99   0.322     .5630397    5.754273
+    hyperten |   1.321712    .640023     0.58   0.565     .5116265    3.414451
+       sysbp |   1.002785   .0083785     0.33   0.739     .9864971    1.019342
+     totchol |   1.001573   .0045954     0.34   0.732     .9926069    1.010621
+       2.sex |   .5155244   .2067129    -1.65   0.098     .2349296    1.131255
+             |
+        educ |
+          2  |   .6023485    .294653    -1.04   0.300     .2309205    1.571206
+          3  |   1.003355   .5211879     0.01   0.995     .3624951      2.7772
+          4  |   1.072833   .5894754     0.13   0.898     .3654544    3.149421
+------------------------------------------------------------------------------
+
+. 
+. log close
+      name:  <unnamed>
+       log:  D:\MPH EPIDEMIOLOGY AND DISEASE CONTROL\STATA & R\Framingham_Analysis.log
+  log type:  text
+ closed on:  11 Jun 2025, 10:52:40
+---------------------------------------------------------------------------------------------------------------
