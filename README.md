@@ -53,7 +53,3 @@ Visualizations:
 Age histogram shows a slightly right-skewed distribution.
 Systolic BP box plot likely indicates higher BP in males.
 BMI vs. cholesterol scatter plot suggests a weak positive correlation.
-Issues and Recommendations
-Missing outreg2: The outreg2 command failed due to the package not being installed. Run ssc install outreg2 in Stata to generate cvd_logistic_results.txt and death_cox_results.txt.
-Cox Model Issue: The period variable is constant (1), making the Cox regression inappropriate. Consider replacing with logistic regression for death:
-stata
